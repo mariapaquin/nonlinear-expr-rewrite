@@ -1,26 +1,21 @@
-# AvailableExpressions
+# Step 1
 
-Initialize a symbolic variable for each non-linear variable
-expression. Every time the expression is killed, reassign
-the *same* symbolic variable (rather than generating a new
-one, as in the first approach). 
+Identify all non-linear variable expressions, and replace each with a new symbolic variable. Each time an expression is killed (i.e. one of its operands is redefined), reassign the symbolic variable. 
 
 For example,
 
-    public void m(int a, int b) {
-        while (b == 1) {
-                b = b+1;
-        }
-        a = b*b;
-    }
+a = b*b;
+b = b+1;
+a = b*b;
 
 is rewritten as
 
-    public void m(int a, int b) {
-        int x0 = Debug.makeSymbolicInteger("x0");
-		while (b == 1) {
-                b = b+1;
-				x0 = Debug.makeSymbolicInteger("x0");
-        }
-        a = x0;
-    }
+int x0 = Debug.makeSymbolicInteger("x0");
+a = x0;
+b = b+1;
+x0 = Debug.makeSymbolicInteder("x0");
+a = x0; 
+
+# Step 2
+
+Use reaching definitions analysis to remove definitions that are not used.            
