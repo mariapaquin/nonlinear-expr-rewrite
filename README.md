@@ -4,9 +4,9 @@ Identify all non-linear variable expressions, and replace each with a new symbol
 
 For example,
 
-a = b*b;  
+a = b\*b;  
 b = b+1;  
-a = b*b;
+a = b\*b;
 
 is rewritten as
 
