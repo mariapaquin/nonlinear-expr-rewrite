@@ -21,9 +21,9 @@ a = x0;
 Use reaching definitions analysis to remove definitions that are not used.            
 For example, we can remove the re-assignment of x0 after b = b+1, since it is not used before it is reassigned.
 
-a = b\*c;
-b = b+1;
-c = c+1;
+a = b\*c;  
+b = b+1;  
+c = c+1;  
 a = b\*c;
 
 int x0 = Debug.makeSymbolicInteger("x0");  
