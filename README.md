@@ -18,7 +18,7 @@ a = x0;
 
 b = b+1;
 
-x0 = Debug.makeSymbolicInteder("x0");
+x0 = Debug.makeSymbolicInteger("x0");
 
 a = x0; 
 
