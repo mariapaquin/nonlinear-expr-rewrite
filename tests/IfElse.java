@@ -1,12 +1,11 @@
 public class IfElse {
-    public void m(int a, int b){
-        a = b+1;
+    public void m(int a, int b, int c){
+        a = b*c;
 
         if (true) {
-            b = 0;
-        } else {
-            b = 1;
+            b = b+1;
         }
-        a = b+2;
+        a=1;
+        c = c+1;
     }
 }

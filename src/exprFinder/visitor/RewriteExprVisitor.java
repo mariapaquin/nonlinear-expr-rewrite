@@ -6,6 +6,7 @@ import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jdt.core.dom.rewrite.ListRewrite;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +16,12 @@ public class RewriteExprVisitor extends ASTVisitor {
     private AST ast;
     private ASTRewrite rewriter;
 
+    public List<ASTNode> getSymbVarDec() {
+        return symbVarDec;
+    }
+
+    private List<ASTNode> symbVarDec;
+
 
     public RewriteExprVisitor(HashMap<String, Integer> exprToVarmap,
                               HashMap<ASTNode, KillSet> killMap,
@@ -23,6 +30,7 @@ public class RewriteExprVisitor extends ASTVisitor {
         this.killMap = killMap;
         this.rewriter = rewriter;
         this.ast = ast;
+        symbVarDec = new ArrayList<>();
     }
 
     @Override
@@ -61,6 +69,7 @@ public class RewriteExprVisitor extends ASTVisitor {
             varDeclaration.setType(ast.newPrimitiveType(PrimitiveType.INT));
 
             addVariableStatementDeclaration(varDeclaration, node);
+//            symbVarDec.add(varDeclaration);
         }
     }
 
@@ -101,6 +110,10 @@ public class RewriteExprVisitor extends ASTVisitor {
             ExpressionStatement stmt = ast.newExpressionStatement(assignment);
 
             addAssignmentStatement(parent, stmt, (Block) block);
+            if (!symbVarDec.contains(stmt)) {
+                symbVarDec.add(stmt);
+            }
+
         }
 
         return true;
@@ -144,6 +157,7 @@ public class RewriteExprVisitor extends ASTVisitor {
             ExpressionStatement stmt = ast.newExpressionStatement(assignment);
 
             addAssignmentStatement(parent, stmt, (Block) block);
+
         }
 
         return true;

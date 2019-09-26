@@ -1,13 +1,14 @@
 public class If {
-
-    public void m(int a, int b){
-        b = 2;
+    public void m(int a, int b, int c){
+        int x0 = Debug.makeSymbolicInteger("x0");
+		a = x0;
 
         if (true) {
-            b = 1;
+            b = b+1;
+			x0 = Debug.makeSymbolicInteger("x1");
         }
-        a = b;
-        b = 1;
-        a = 1;
+        c = c+1;
+		x0 = Debug.makeSymbolicInteger("x2");
+        a = x0;
     }
 }
