@@ -118,17 +118,20 @@ public class Driver {
 
         solver.initializeDefinitionSet();
 
-//        List<EntryLabel> entryLabels = solver.processWorkList();
-//
-//        for (EntryLabel entry : entryLabels) {
-//            for (String var: entry.definitionSet.getVariables()) {
-//                for (DefinitionLiteral d : entry.definitionSet.get(var)) {
-//                    if (!reachingDef.contains(d.getNode())) {
-//                        reachingDef.add(d.getNode());
-//                    }
-//                }
-//            }
-//        }
+        // TODO: Need another visitor to go through these labels and
+        // pick out only the ones that contain variable infix expressions
+
+        List<EntryLabel> entryLabels = solver.processWorkList();
+
+        for (EntryLabel entry : entryLabels) {
+            for (String var: entry.definitionSet.getVariables()) {
+                for (DefinitionLiteral d : entry.definitionSet.get(var)) {
+                    if (!reachingDef.contains(d.getNode())) {
+                        reachingDef.add(d.getNode());
+                    }
+                }
+            }
+        }
     }
 
     private void replaceExpressions() {
@@ -154,7 +157,6 @@ public class Driver {
             }
         }
         symbVarDec = rewriteVisitor.getSymbVarDec();
-        
     }
 
     private void setupAST(File file) throws IOException {
@@ -168,5 +170,4 @@ public class Driver {
 
         rewriter = ASTRewrite.create(ast);
     }
-
 }

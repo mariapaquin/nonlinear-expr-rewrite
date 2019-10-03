@@ -5,10 +5,25 @@ public class If {
 
         if (true) {
             b = b+1;
-			x0 = Debug.makeSymbolicInteger("x1");
+			x0 = Debug.makeSymbolicInteger("x0");
         }
+
         c = c+1;
-		x0 = Debug.makeSymbolicInteger("x2");
+		x0 = Debug.makeSymbolicInteger("x0");
         a = x0;
     }
 }
+
+//public class If {
+//    public void m(int a, int b, int c){
+//        a = b*c;
+//
+//        if (true) {
+//            a = b*c;
+//            b = b+1;
+//        }
+//
+//        c = c+1;
+//        a = b*c;
+//    }
+//}

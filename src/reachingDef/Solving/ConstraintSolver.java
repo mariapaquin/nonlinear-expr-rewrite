@@ -32,7 +32,7 @@ public class ConstraintSolver {
         }
     }
 
-    public void processWorkList() {
+    public ArrayList<EntryLabel> processWorkList() {
         List<ConstraintTerm> workList = graph.getAllTerms();
         int iteration = 0;
         change = true;
@@ -52,21 +52,25 @@ public class ConstraintSolver {
             }
         }
 
-        System.out.println();
+        ArrayList<EntryLabel> entryLabels = new ArrayList<>();
 
         for (int j = 0; j < workList.size(); j++) {
             ConstraintTerm t = workList.get(j);
             if (t instanceof EntryLabel) {
+                entryLabels.add((EntryLabel) t);
                 System.out.println(t + "\n--------------\n" + t.getDefinitionSet());
                 System.out.println();
             }
 
             if (t instanceof SetDifference) {
                 ConstraintTerm entry = ((SetDifference) t).getEntryTerm();
+                entryLabels.add((EntryLabel) entry);
                 System.out.println(entry + "\n--------------\n" + entry.getDefinitionSet());
                 System.out.println();
           }
         }
+
+        return entryLabels;
     }
 
     private void satisfyConstraint(Constraint constraint) {
