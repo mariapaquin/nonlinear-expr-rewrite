@@ -12,16 +12,6 @@ public abstract class ConstraintTerm {
 
     public DefinitionSet definitionSet;
 
-    public boolean isIncludeInReachingSet() {
-        return includeInReachingSet;
-    }
-
-    public void setIncludeInReachingSet(boolean includeInReachingSet) {
-        this.includeInReachingSet = includeInReachingSet;
-    }
-
-    public boolean includeInReachingSet;
-
     public interface TermProcessor {
         void processTerm(ConstraintTerm term);
     }

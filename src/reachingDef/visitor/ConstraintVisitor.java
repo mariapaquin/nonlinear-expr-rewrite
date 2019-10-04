@@ -21,6 +21,10 @@ public class ConstraintVisitor extends ASTVisitor {
     private ArrayList<Constraint> constraints;
     private ConstraintTermFactory variableFactory;
 
+    public ConstraintTermFactory getVariableFactory() {
+        return variableFactory;
+    }
+
     public ConstraintVisitor() {
         variableFactory = new ConstraintTermFactory();
         constraints  = new ArrayList<>();

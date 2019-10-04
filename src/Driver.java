@@ -11,8 +11,10 @@ import org.eclipse.text.edits.TextEdit;
 import reachingDef.Constraint.Constraint;
 import reachingDef.Constraint.Term.DefinitionLiteral;
 import reachingDef.Constraint.Term.EntryLabel;
+import reachingDef.ConstraintCreator.ConstraintTermFactory;
 import reachingDef.Solving.ConstraintSolver;
 import reachingDef.visitor.ConstraintVisitor;
+import reachingDef.visitor.NodeLabelExprVisitor;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -121,7 +123,11 @@ public class Driver {
         // TODO: Need another visitor to go through these labels and
         // pick out only the ones that contain variable infix expressions
 
-        List<EntryLabel> entryLabels = solver.processWorkList();
+        ConstraintTermFactory variableFactory = visitor.getVariableFactory();
+        NodeLabelExprVisitor nodeLabelExprVisitor = new NodeLabelExprVisitor(variableFactory);
+        cu.accept(nodeLabelExprVisitor);
+
+        List<EntryLabel> entryLabels = nodeLabelExprVisitor.getEntryLablesWithExpr();
 
         for (EntryLabel entry : entryLabels) {
             for (String var: entry.definitionSet.getVariables()) {

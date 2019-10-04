@@ -4,6 +4,7 @@ public class If {
 		a = x0;
 
         if (true) {
+            a = x0;
             b = b+1;
 			x0 = Debug.makeSymbolicInteger("x0");
         }
