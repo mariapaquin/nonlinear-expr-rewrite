@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RewriteExprVisitor extends ASTVisitor {
+public class InitializeReAssignVisitor extends ASTVisitor {
     private HashMap<String, Integer> exprToVarmap;
     private HashMap<ASTNode, KillSet> killMap;
     private AST ast;
@@ -23,9 +23,9 @@ public class RewriteExprVisitor extends ASTVisitor {
     private List<ASTNode> symbVarDec;
 
 
-    public RewriteExprVisitor(HashMap<String, Integer> exprToVarmap,
-                              HashMap<ASTNode, KillSet> killMap,
-                              ASTRewrite rewriter, AST ast) {
+    public InitializeReAssignVisitor(HashMap<String, Integer> exprToVarmap,
+                                     HashMap<ASTNode, KillSet> killMap,
+                                     ASTRewrite rewriter, AST ast) {
         this.exprToVarmap = exprToVarmap;
         this.killMap = killMap;
         this.rewriter = rewriter;

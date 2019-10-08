@@ -5,7 +5,7 @@ import exprFinder.expr.ExpressionLiteral;
 import exprFinder.expr.KillSet;
 import exprFinder.visitor.AEVisitor;
 import exprFinder.visitor.ExpressionVisitor;
-import exprFinder.visitor.RewriteExprVisitor;
+import exprFinder.visitor.InitializeReAssignVisitor;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -15,7 +15,6 @@ import org.eclipse.text.edits.TextEdit;
 
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
@@ -49,7 +48,7 @@ public class Driver {
                 methodDeclaration.accept(aeVisitor);
                 HashMap<ASTNode, KillSet> killMap = aeVisitor.getKillMap();
 
-                RewriteExprVisitor rewriteVisitor = new RewriteExprVisitor(exprToVarMap,
+                InitializeReAssignVisitor rewriteVisitor = new InitializeReAssignVisitor(exprToVarMap,
                         killMap, rewriter, ast);
                 methodDeclaration.accept(rewriteVisitor);
 

@@ -2,15 +2,14 @@ import exprFinder.expr.ExpressionLiteral;
 import exprFinder.expr.KillSet;
 import exprFinder.visitor.AEVisitor;
 import exprFinder.visitor.ExpressionVisitor;
-import exprFinder.visitor.ReplaceExpressionsVisitor;
-import exprFinder.visitor.RewriteExprVisitor;
+import exprFinder.visitor.ReplaceExpressionVisitor;
+import exprFinder.visitor.InitializeReAssignVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
 import reachingDef.Constraint.Constraint;
-import reachingDef.Constraint.Term.ConstraintTerm;
 import reachingDef.Constraint.Term.DefinitionLiteral;
 import reachingDef.Constraint.Term.EntryLabel;
 import reachingDef.ConstraintCreator.ConstraintTermFactory;
@@ -30,7 +29,6 @@ public class Driver {
     private ASTRewrite rewriter;
     private CompilationUnit cu;
     private String source;
-    private List<ASTNode> symbVarDec;
     private List<ASTNode> reachingDef;
 
     public static void main(String[] args) throws IOException {
@@ -40,12 +38,13 @@ public class Driver {
         Driver driver = new Driver();
 
         driver.setupAST(file);
-        driver.insertVarDecAndAssignments();
+        driver.initializeReassignSymbVar();
         driver.applyEdits();
 
         driver.setupAST(file);
         driver.findReachingDefinitions();
         driver.removeNonreachingDefinitions();
+
         driver.replaceExpressions();
         driver.applyEdits();
     }
@@ -124,6 +123,8 @@ public class Driver {
         NodeLabelExprVisitor nodeLabelExprVisitor = new NodeLabelExprVisitor(variableFactory);
         cu.accept(nodeLabelExprVisitor);
 
+        // we only care about the reaching definitions of statements that contain
+        // nonlinear variable expressions
         List<EntryLabel> entryLabels = nodeLabelExprVisitor.getEntryLablesWithExpr();
 
         for (EntryLabel entry : entryLabels) {
@@ -138,8 +139,7 @@ public class Driver {
         }
     }
 
-    private void insertVarDecAndAssignments() {
-        RewriteExprVisitor rewriteVisitor = null;
+    private void initializeReassignSymbVar() {
         List<TypeDeclaration> types = cu.types();
 
         for (TypeDeclaration type : types) {
@@ -160,20 +160,16 @@ public class Driver {
                 HashMap<ASTNode, KillSet> killMap = aeVisitor.getKillMap();
 
                 // (1) initialize each symbolic variable at the beginning of the method
-                // (2) replace each infix expression with its corresponding symbolic variable
-                // (3) Get the expressions killed for each statement. Re-assign the symbolic
+                // (2) Get the expressions killed for each statement. Re-assign the symbolic
                 // variable associated with each expression in its kill set.
-                rewriteVisitor = new RewriteExprVisitor(exprToVarMap,
+                InitializeReAssignVisitor visitor = new InitializeReAssignVisitor(exprToVarMap,
                         killMap, rewriter, ast);
-                methodDeclaration.accept(rewriteVisitor);
+                methodDeclaration.accept(visitor);
             }
         }
-        symbVarDec = rewriteVisitor.getSymbVarDec();
     }
 
-
     private void replaceExpressions() {
-        ReplaceExpressionsVisitor replaceExprVisitor = null;
         List<TypeDeclaration> types = cu.types();
 
         for (TypeDeclaration type : types) {
@@ -188,8 +184,8 @@ public class Driver {
                 HashMap<String, Integer> exprToVarMap = exprVisitor.getExprMap();
 
                 // replace each infix expression with its corresponding symbolic variable
-                replaceExprVisitor = new ReplaceExpressionsVisitor(exprToVarMap, rewriter, ast);
-                methodDeclaration.accept(replaceExprVisitor);
+                ReplaceExpressionVisitor visitor = new ReplaceExpressionVisitor(exprToVarMap, rewriter, ast);
+                methodDeclaration.accept(visitor);
             }
         }
     }
