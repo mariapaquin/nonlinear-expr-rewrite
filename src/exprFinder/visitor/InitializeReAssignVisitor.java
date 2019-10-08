@@ -73,8 +73,8 @@ public class InitializeReAssignVisitor extends ASTVisitor {
 
         List<ExpressionLiteral> exprs = ks.getExprs();
 
-        for (ExpressionLiteral expressionLiteral : exprs) {
-            int symbVarNum = exprToVarmap.get(expressionLiteral.getExpr());
+        for (ExpressionLiteral expr : exprs) {
+            int symbVarNum = exprToVarmap.get(expr.getExpr());
             String name = "x" + symbVarNum;
 
             MethodInvocation randMethodInvocation = ast.newMethodInvocation();
@@ -117,7 +117,7 @@ public class InitializeReAssignVisitor extends ASTVisitor {
         List<ExpressionLiteral> exprs = ks.getExprs();
 
         for (ExpressionLiteral expr : exprs) {
-            int symbVarNum = exprToVarmap.get(expr.toString());
+            int symbVarNum = exprToVarmap.get(expr.getExpr());
             String name = "x" + symbVarNum;
 
             MethodInvocation randMethodInvocation = ast.newMethodInvocation();
@@ -160,7 +160,7 @@ public class InitializeReAssignVisitor extends ASTVisitor {
         List<ExpressionLiteral> exprs = ks.getExprs();
 
         for (ExpressionLiteral expr : exprs) {
-            int symbVarNum = exprToVarmap.get(expr.toString());
+            int symbVarNum = exprToVarmap.get(expr.getExpr());
             String name = "x" + symbVarNum;
 
             MethodInvocation randMethodInvocation = ast.newMethodInvocation();

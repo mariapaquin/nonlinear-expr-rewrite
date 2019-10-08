@@ -30,7 +30,6 @@ public class ExpressionLiteral {
         return expr;
     }
 
-
     @Override
     public boolean equals(Object obj) {
         return toString().equals(obj.toString());

@@ -29,12 +29,11 @@ public class Driver {
     private ASTRewrite rewriter;
     private CompilationUnit cu;
     private String source;
-    private File file;
     private List<ASTNode> reachingDef;
     private List<String> symbVars;
 
     public static void main(String[] args) throws IOException {
-        String source = "./tests/IfElse.java";
+        String source = "./tests/PostfixExpr.java";
         File file = new File(source);
 
         Driver driver = new Driver();
@@ -58,9 +57,10 @@ public class Driver {
 
                 // only need to worry about removing re-assignments of
                 // the symbolic variables we declared
-                if(!symbVars.contains(node.getLeftHandSide())){
+                if(!symbVars.contains(node.getLeftHandSide().toString())){
                     return false;
                 }
+
                 ASTNode parent = node.getParent();
 
                 if (!reachingDef.contains(parent)) {
@@ -136,6 +136,7 @@ public class Driver {
         List<EntryLabel> entryLabels = nodeLabelExprVisitor.getEntryLablesWithExpr();
 
         for (EntryLabel entry : entryLabels) {
+            System.out.println(entry);
             Set<String> prgmVars = entry.reachingDefSet.getVariables();
             for (String var: prgmVars) {
                 for (DefinitionLiteral d : entry.reachingDefSet.get(var)) {
