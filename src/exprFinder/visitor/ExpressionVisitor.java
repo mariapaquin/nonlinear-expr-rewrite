@@ -48,14 +48,14 @@ public class ExpressionVisitor extends ASTVisitor {
             return true;
         }
 
-        ExpressionLiteral expressionLiteral = new ExpressionLiteral(node);
+        ExpressionLiteral expressionLiteral = new ExpressionLiteral(node.toString());
 
         List<String> varsUsed = getVarsUsed(node);
         expressionLiteral.setVarsUsed(varsUsed);
 
         boolean existingExpr = false;
         for (ExpressionLiteral e : nonlinearVarExpr) {
-            if (e.getNode().toString().equals(node.toString())) {
+            if (e.getExpr().equals(expressionLiteral.getExpr())) {
                 existingExpr = true;
             }
         }

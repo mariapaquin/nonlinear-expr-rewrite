@@ -147,16 +147,24 @@ public class Driver {
         for (TypeDeclaration type : types) {
 
             for (MethodDeclaration methodDeclaration : type.getMethods()) {
+
+                // get a list of nonlinear variable expressions, each is an ExpressionLiteral object
+                // map each to a new symbolic variable (string), ie what it will be replaced with
                 ExpressionVisitor exprVisitor = new ExpressionVisitor();
                 methodDeclaration.accept(exprVisitor);
+
                 List<ExpressionLiteral> exprList = exprVisitor.getNonlinearVarExpr();
                 HashMap<String, Integer> exprToVarMap = exprVisitor.getExprMap();
-                int varCount = exprVisitor.getVarCount();
 
+                // map each applicable node (assignment, var dec, postfix expr, etc) to the expression it kills
                 AEVisitor aeVisitor = new AEVisitor(exprList);
                 methodDeclaration.accept(aeVisitor);
                 HashMap<ASTNode, KillSet> killMap = aeVisitor.getKillMap();
 
+                // (1) initialize each symbolic variable at the beginning of the method
+                // (2) replace each infix expression with its corresponding symbolic variable
+                // (3) Get the expressions killed for each statement. Re-assign the symbolic
+                // variable associated with each expression in its kill set.
                 rewriteVisitor = new RewriteExprVisitor(exprToVarMap,
                         killMap, rewriter, ast);
                 methodDeclaration.accept(rewriteVisitor);

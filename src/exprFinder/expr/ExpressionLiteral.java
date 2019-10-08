@@ -10,11 +10,11 @@ import java.util.List;
  */
 public class ExpressionLiteral {
 
-    private Expression node;
+    private String expr;
     private List<String> varsUsed;
 
-    public ExpressionLiteral(Expression node) {
-        this.node = node;
+    public ExpressionLiteral(String expr) {
+        this.expr = expr;
         varsUsed = new ArrayList<>();
     }
 
@@ -26,13 +26,10 @@ public class ExpressionLiteral {
         return varsUsed.contains(var);
     }
 
-    public String toString() {
-        return node.toString();
+    public String getExpr() {
+        return expr;
     }
 
-    public Expression getNode() {
-        return node;
-    }
 
     @Override
     public boolean equals(Object obj) {

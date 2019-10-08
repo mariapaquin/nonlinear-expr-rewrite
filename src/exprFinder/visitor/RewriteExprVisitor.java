@@ -93,8 +93,8 @@ public class RewriteExprVisitor extends ASTVisitor {
 
         List<ExpressionLiteral> exprs = ks.getExprs();
 
-        for (ExpressionLiteral expr : exprs) {
-            int symbVarNum = exprToVarmap.get(expr.toString());
+        for (ExpressionLiteral expressionLiteral : exprs) {
+            int symbVarNum = exprToVarmap.get(expressionLiteral.getExpr());
             String name = "x" + symbVarNum;
 
             MethodInvocation randMethodInvocation = ast.newMethodInvocation();

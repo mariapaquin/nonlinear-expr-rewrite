@@ -15,7 +15,7 @@ public class AEVisitor extends ASTVisitor {
 
     public AEVisitor(List<ExpressionLiteral> availableExpressions) {
         this.availableExpressions = availableExpressions;
-        killMap = new HashMap<ASTNode, KillSet>();
+        killMap = new HashMap<>();
     }
 
     @Override
