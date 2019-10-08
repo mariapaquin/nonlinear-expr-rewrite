@@ -33,7 +33,7 @@ public class Driver {
     private List<String> symbVars;
 
     public static void main(String[] args) throws IOException {
-        String source = "./tests/PostfixExpr.java";
+        String source = "./tests/StatementSequence.java";
         File file = new File(source);
 
         Driver driver = new Driver();
@@ -136,7 +136,6 @@ public class Driver {
         List<EntryLabel> entryLabels = nodeLabelExprVisitor.getEntryLablesWithExpr();
 
         for (EntryLabel entry : entryLabels) {
-            System.out.println(entry);
             Set<String> prgmVars = entry.reachingDefSet.getVariables();
             for (String var: prgmVars) {
                 for (DefinitionLiteral d : entry.reachingDefSet.get(var)) {
