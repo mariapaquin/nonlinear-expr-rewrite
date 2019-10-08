@@ -10,17 +10,18 @@ import java.util.Set;
  */
 public abstract class ConstraintTerm {
 
-    public DefinitionSet definitionSet;
+    // set of reaching definitions
+    public DefinitionSet reachingDefSet;
 
     public interface TermProcessor {
         void processTerm(ConstraintTerm term);
     }
 
-    public abstract DefinitionSet getDefinitionSet();
+    public abstract DefinitionSet getReachingDefSet();
 
     public abstract void updateDefinitionSet(DefinitionSet ds2);
 
-    public abstract void setDefinitionSet(Set<String> variables);
+    public abstract void setReachingDefSet(Set<String> variables);
 
     public void processTerms(TermProcessor processor) {
         processor.processTerm(this);

@@ -79,13 +79,13 @@ public class ConstraintVisitor extends ASTVisitor {
             SimpleName name = (SimpleName) lhs;
 
             // parent is expression statement (wrapper for assignments)
-            ConstraintTerm assignEntry = variableFactory.createEntryLabel(node.getParent()); // RD_entry[v=e]
+            ConstraintTerm assignEntry = variableFactory.createEntryLabel(parent); // RD_entry[v=e]
             DefinitionLiteral defWild = variableFactory.createDefinitionWildcard(name.getIdentifier());
             SetDifference setDiff = getSetDiff(assignEntry, defWild);
-            variableFactory.setEntryLabel(node.getParent(), setDiff);
+            variableFactory.setEntryLabel(parent, setDiff);
 
-            ConstraintTerm assignExit = variableFactory.createExitLabel(node.getParent()); // RD_exit[v=e]
-            ConstraintTerm def = variableFactory.createDefinition(name.getIdentifier(), node.getParent()); // (v,v=e)
+            ConstraintTerm assignExit = variableFactory.createExitLabel(parent); // RD_exit[v=e]
+            ConstraintTerm def = variableFactory.createDefinition(name.getIdentifier(), parent); // (v,v=e)
 
             result.add(newSubsetConstraint(def, assignExit));
             result.add(newSubsetConstraint(setDiff, assignExit));

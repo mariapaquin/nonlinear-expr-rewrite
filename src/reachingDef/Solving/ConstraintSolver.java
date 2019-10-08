@@ -28,7 +28,7 @@ public class ConstraintSolver {
 
     public void initializeDefinitionSet() {
         for (ConstraintTerm term : graph.getAllTerms()) {
-            term.setDefinitionSet(variables);
+            term.setReachingDefSet(variables);
         }
     }
 
@@ -38,17 +38,17 @@ public class ConstraintSolver {
         change = true;
         while (change) {
             change = false;
-            System.out.println("Starting iteration " + ++iteration
-                    + "\n--------------------");
+//            System.out.println("Starting iteration " + ++iteration
+//                    + "\n--------------------");
             for (int j = 0; j < workList.size(); j++) {
                 ConstraintTerm t = workList.get(j);
-                System.out.println("Constraint.Term:" + t);
+//                System.out.println("Constraint.Term:" + t);
                 int h = 0;
                 for (Constraint c : graph.getConstraintsInvolving(t)) {
-                    System.out.println(++h + ": checking Constraint " + c + "...");
+//                    System.out.println(++h + ": checking Constraint " + c + "...");
                     satisfyConstraint(c);
                 }
-                System.out.println("\n");
+//                System.out.println("\n");
             }
         }
 
@@ -58,15 +58,15 @@ public class ConstraintSolver {
             ConstraintTerm t = workList.get(j);
             if (t instanceof EntryLabel) {
                 entryLabels.add((EntryLabel) t);
-                System.out.println(t + "\n--------------\n" + t.getDefinitionSet());
-                System.out.println();
+//                System.out.println(t + "\n--------------\n" + t.getReachingDefSet());
+//                System.out.println();
             }
 
             if (t instanceof SetDifference) {
                 ConstraintTerm entry = ((SetDifference) t).getEntryTerm();
                 entryLabels.add((EntryLabel) entry);
-                System.out.println(entry + "\n--------------\n" + entry.getDefinitionSet());
-                System.out.println();
+//                System.out.println(entry + "\n--------------\n" + entry.getReachingDefSet());
+//                System.out.println();
           }
         }
 
@@ -77,12 +77,12 @@ public class ConstraintSolver {
         ConstraintTerm lhs = constraint.getLhs();
         ConstraintTerm rhs = constraint.getRhs();
 
-        DefinitionSet lhsEst = lhs.getDefinitionSet();
-        DefinitionSet rhsEst = rhs.getDefinitionSet();
+        DefinitionSet lhsEst = lhs.getReachingDefSet();
+        DefinitionSet rhsEst = rhs.getReachingDefSet();
 
         if (!rhsEst.containsAll(lhsEst)) {
-            System.out.println(lhs.getDefinitionSet() + " is not in " + rhs.getDefinitionSet());
-            System.out.println("Performing union operation...");
+//            System.out.println(lhs.getReachingDefSet() + " is not in " + rhs.getReachingDefSet());
+//            System.out.println("Performing union operation...");
 
             // copy the previous definition set for change detection
             HashMap<String, List<DefinitionLiteral>> prev = new HashMap<>();
@@ -94,15 +94,15 @@ public class ConstraintSolver {
 
             rhs.updateDefinitionSet(union);
 
-            if (changed(prev, rhs.getDefinitionSet().getVarMap())) {
-                System.out.println("set was changed");
+            if (changed(prev, rhs.getReachingDefSet().getVarMap())) {
+//                System.out.println("set was changed");
                 change = true;
             }
-            System.out.println(lhs.getDefinitionSet() + " is now in " + rhs.getDefinitionSet());
+//            System.out.println(lhs.getReachingDefSet() + " is now in " + rhs.getReachingDefSet());
 
         } else {
-            System.out.println(lhsEst + " is in " + rhsEst);
-            System.out.println("Constraint already satisfied.");
+//            System.out.println(lhsEst + " is in " + rhsEst);
+//            System.out.println("Constraint already satisfied.");
         }
     }
 

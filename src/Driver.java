@@ -9,6 +9,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.text.edits.TextEdit;
 import reachingDef.Constraint.Constraint;
+import reachingDef.Constraint.Term.ConstraintTerm;
 import reachingDef.Constraint.Term.DefinitionLiteral;
 import reachingDef.Constraint.Term.EntryLabel;
 import reachingDef.ConstraintCreator.ConstraintTermFactory;
@@ -48,25 +49,18 @@ public class Driver {
     }
 
     private void removeNonreachingDefinitions() {
-        System.out.println(reachingDef);
+        System.out.println(reachingDef + "\n");
         cu.accept(new ASTVisitor() {
             @Override
             public boolean visit(Assignment node) {
-                System.out.println(node);
-                if (reachingDef.contains(node)) {
+                ASTNode parent = node.getParent();
 
-                    System.out.println("definition " + node + " is reaching");
+                if (!reachingDef.contains(parent)) {
+                    rewriter.remove(parent, null);
                 }
                 return true;
             }
         });
-
-/*        for (ASTNode node : symbVarDec) {
-            if (!reachingDef.contains(node)) {
-                System.out.println(node + " is not reaching");
-                //rewriter.remove(node, null);
-            }
-        }*/
     }
 
     private void applyEdits() throws IOException {
@@ -120,18 +114,28 @@ public class Driver {
 
         solver.initializeDefinitionSet();
 
-        // TODO: Need another visitor to go through these labels and
-        // pick out only the ones that contain variable infix expressions
+        solver.processWorkList();
+
+        // pick out only the labels that contain variable infix expressions
 
         ConstraintTermFactory variableFactory = visitor.getVariableFactory();
+
+        HashMap<ASTNode, ConstraintTerm> termMapEntry = variableFactory.getTermMapEntry();
+
+        for (ASTNode node : termMapEntry.keySet()) {
+            System.out.println(node + " " + System.identityHashCode(node));
+        }
+
+
         NodeLabelExprVisitor nodeLabelExprVisitor = new NodeLabelExprVisitor(variableFactory);
         cu.accept(nodeLabelExprVisitor);
 
         List<EntryLabel> entryLabels = nodeLabelExprVisitor.getEntryLablesWithExpr();
 
         for (EntryLabel entry : entryLabels) {
-            for (String var: entry.definitionSet.getVariables()) {
-                for (DefinitionLiteral d : entry.definitionSet.get(var)) {
+            Set<String> prgmVars = entry.reachingDefSet.getVariables();
+            for (String var: prgmVars) {
+                for (DefinitionLiteral d : entry.reachingDefSet.get(var)) {
                     if (!reachingDef.contains(d.getNode())) {
                         reachingDef.add(d.getNode());
                     }

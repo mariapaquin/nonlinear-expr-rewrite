@@ -32,6 +32,8 @@ public class NodeLabelExprVisitor extends ASTVisitor {
     public boolean visit(Assignment node) {
         ASTNode parent = node.getParent();
         currStmt = variableFactory.createEntryLabel(parent);
+        System.out.println(node);
+        System.out.println("node label expr visitor " + System.identityHashCode(parent));
         return (currStmt != null);
     }
 
@@ -61,12 +63,15 @@ public class NodeLabelExprVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(MethodInvocation node) {
-        currStmt = variableFactory.createEntryLabel(node);
+        // TODO: check if parent is expression statement
+        ASTNode parent = node.getParent();
+        currStmt = variableFactory.createEntryLabel(parent);
         return (currStmt != null);
 
     }
     @Override
     public boolean visit(PostfixExpression node) {
+        // TODO: check if parent is expression statement
         ASTNode parent = node.getParent();
         currStmt = variableFactory.createEntryLabel(parent);
         return (currStmt != null);
@@ -74,6 +79,7 @@ public class NodeLabelExprVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(PrefixExpression node) {
+        // TODO: check if parent is expression statement
         ASTNode parent = node.getParent();
         currStmt = variableFactory.createEntryLabel(parent);
         return (currStmt != null);
@@ -95,8 +101,6 @@ public class NodeLabelExprVisitor extends ASTVisitor {
 
     @Override
     public boolean visit(InfixExpression node) {
-        System.out.println("checking " + currStmt + " for nonlinear var expr");
-
         Expression lhs = node.getLeftOperand();
         Expression rhs = node.getRightOperand();
         InfixExpression.Operator op = node.getOperator();
@@ -117,8 +121,6 @@ public class NodeLabelExprVisitor extends ASTVisitor {
             ConstraintTerm entry = ((SetDifference) currStmt).getEntryTerm();
             entryLablesWithExpr.add((EntryLabel) entry);
         }
-
-        System.out.println("added " + currStmt + " to list of stmts to check for reaching defs");
 
         return true;
     }

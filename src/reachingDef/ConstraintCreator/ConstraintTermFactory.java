@@ -11,6 +11,10 @@ import reachingDef.Constraint.Term.EntryLabel;
 import reachingDef.Constraint.Term.ExitLabel;
 
 public class ConstraintTermFactory {
+    public HashMap<ASTNode, ConstraintTerm> getTermMapEntry() {
+        return termMapEntry;
+    }
+
     private HashMap<ASTNode, ConstraintTerm> termMapEntry;
     private HashMap<ASTNode, ConstraintTerm> termMapExit;
     private HashMap<SimpleName, HashMap<ASTNode, DefinitionLiteral>> varMap;

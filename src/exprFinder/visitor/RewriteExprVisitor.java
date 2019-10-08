@@ -33,7 +33,7 @@ public class RewriteExprVisitor extends ASTVisitor {
         symbVarDec = new ArrayList<>();
     }
 
-    @Override
+/*    @Override
     public void endVisit(InfixExpression node) {
         Integer symbVarNum = exprToVarmap.get(node.toString());
         if (symbVarNum == null) {
@@ -44,7 +44,7 @@ public class RewriteExprVisitor extends ASTVisitor {
 
         SimpleName exprSymbVar = ast.newSimpleName(name);
         rewriter.replace(node, exprSymbVar, null);
-    }
+    }*/
 
 
 

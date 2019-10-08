@@ -19,28 +19,28 @@ public class SetDifference extends ConstraintTerm {
         this.varKilled = defWild.getName();
     }
 
-    public void setDefinitionSet(Set<String> variables){
-        definitionSet = new DefinitionSet(variables);
-        entryTerm.setDefinitionSet(variables);
+    public void setReachingDefSet(Set<String> variables){
+        reachingDefSet = new DefinitionSet(variables);
+        entryTerm.setReachingDefSet(variables);
     }
 
     public void updateDefinitionSet(DefinitionSet ds2) {
         entryTerm.updateDefinitionSet(ds2);
 
-        DefinitionSet copy = new DefinitionSet(definitionSet.getVariables());
+        DefinitionSet copy = new DefinitionSet(reachingDefSet.getVariables());
 
         for (String var : copy.getVariables()) {
             copy.put(var, ds2.get(var));
         }
 
-        definitionSet = copy;
+        reachingDefSet = copy;
 
-        definitionSet.killDefinitions(varKilled);
+        reachingDefSet.killDefinitions(varKilled);
 
     }
 
-    public DefinitionSet getDefinitionSet() {
-        return definitionSet;
+    public DefinitionSet getReachingDefSet() {
+        return reachingDefSet;
     }
 
     public ConstraintTerm getEntryTerm() {

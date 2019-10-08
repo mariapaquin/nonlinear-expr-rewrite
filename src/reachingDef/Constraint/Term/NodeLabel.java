@@ -17,16 +17,16 @@ public class NodeLabel extends ConstraintTerm {
 		this.node = node;
 	}
 
-	public void setDefinitionSet(Set<String> variables){
-		definitionSet = new DefinitionSet(variables);
+	public void setReachingDefSet(Set<String> variables){
+		reachingDefSet = new DefinitionSet(variables);
 	}
 
 	public void updateDefinitionSet(DefinitionSet ds2) {
-		definitionSet = ds2;
+		reachingDefSet = ds2;
 	}
 
-	public DefinitionSet getDefinitionSet() {
-		return definitionSet;
+	public DefinitionSet getReachingDefSet() {
+		return reachingDefSet;
 	}
 
 }

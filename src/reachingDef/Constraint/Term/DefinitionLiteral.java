@@ -26,14 +26,14 @@ public class DefinitionLiteral extends ConstraintTerm {
     }
 
     @Override
-    public void setDefinitionSet(Set<String> variables){
-        definitionSet = new DefinitionSet(variables, this);
+    public void setReachingDefSet(Set<String> variables){
+        reachingDefSet = new DefinitionSet(variables, this);
     }
 
     public void updateDefinitionSet(DefinitionSet ds2) { }
 
-    public DefinitionSet getDefinitionSet() {
-        return definitionSet;
+    public DefinitionSet getReachingDefSet() {
+        return reachingDefSet;
     }
 
 
