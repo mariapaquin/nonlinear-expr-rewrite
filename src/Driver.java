@@ -31,6 +31,7 @@ public class Driver {
     private String source;
     private File file;
     private List<ASTNode> reachingDef;
+    private List<String> symbVars;
 
     public static void main(String[] args) throws IOException {
         String source = "./tests/IfElse.java";
@@ -54,6 +55,12 @@ public class Driver {
         cu.accept(new ASTVisitor() {
             @Override
             public boolean visit(Assignment node) {
+
+                // only need to worry about removing re-assignments of
+                // the symbolic variables we declared
+                if(!symbVars.contains(node.getLeftHandSide())){
+                    return false;
+                }
                 ASTNode parent = node.getParent();
 
                 if (!reachingDef.contains(parent)) {
@@ -166,6 +173,8 @@ public class Driver {
                 InitializeReAssignVisitor visitor = new InitializeReAssignVisitor(exprToVarMap,
                         killMap, rewriter, ast);
                 methodDeclaration.accept(visitor);
+
+                symbVars = visitor.getSymbVars();
             }
         }
     }

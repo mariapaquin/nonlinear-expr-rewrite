@@ -15,12 +15,8 @@ public class InitializeReAssignVisitor extends ASTVisitor {
     private HashMap<ASTNode, KillSet> killMap;
     private AST ast;
     private ASTRewrite rewriter;
+    private List<String> symbVars;
 
-    public List<ASTNode> getSymbVarDec() {
-        return symbVarDec;
-    }
-
-    private List<ASTNode> symbVarDec;
 
 
     public InitializeReAssignVisitor(HashMap<String, Integer> exprToVarmap,
@@ -30,23 +26,8 @@ public class InitializeReAssignVisitor extends ASTVisitor {
         this.killMap = killMap;
         this.rewriter = rewriter;
         this.ast = ast;
-        symbVarDec = new ArrayList<>();
+        symbVars = new ArrayList<>();
     }
-
-/*    @Override
-    public void endVisit(InfixExpression node) {
-        Integer symbVarNum = exprToVarmap.get(node.toString());
-        if (symbVarNum == null) {
-            return;
-        }
-
-        String name = "x" + symbVarNum;
-
-        SimpleName exprSymbVar = ast.newSimpleName(name);
-        rewriter.replace(node, exprSymbVar, null);
-    }*/
-
-
 
     @Override
     public void endVisit(MethodDeclaration node) {
@@ -69,7 +50,8 @@ public class InitializeReAssignVisitor extends ASTVisitor {
             varDeclaration.setType(ast.newPrimitiveType(PrimitiveType.INT));
 
             addVariableStatementDeclaration(varDeclaration, node);
-//            symbVarDec.add(varDeclaration);
+
+            symbVars.add(name);
         }
     }
 
@@ -110,10 +92,6 @@ public class InitializeReAssignVisitor extends ASTVisitor {
             ExpressionStatement stmt = ast.newExpressionStatement(assignment);
 
             addAssignmentStatement(parent, stmt, (Block) block);
-            if (!symbVarDec.contains(stmt)) {
-                symbVarDec.add(stmt);
-            }
-
         }
 
         return true;
@@ -157,7 +135,6 @@ public class InitializeReAssignVisitor extends ASTVisitor {
             ExpressionStatement stmt = ast.newExpressionStatement(assignment);
 
             addAssignmentStatement(parent, stmt, (Block) block);
-
         }
 
         return true;
@@ -226,5 +203,9 @@ public class InitializeReAssignVisitor extends ASTVisitor {
             ListRewrite listRewrite = rewriter.getListRewrite(block, Block.STATEMENTS_PROPERTY);
             listRewrite.insertFirst(varDeclaration, null);
         }
+    }
+
+    public List<String> getSymbVars() {
+        return symbVars;
     }
 }
