@@ -32,8 +32,6 @@ public class NodeLabelExprVisitor extends ASTVisitor {
     public boolean visit(Assignment node) {
         ASTNode parent = node.getParent();
         currStmt = variableFactory.createEntryLabel(parent);
-        System.out.println(node);
-        System.out.println("node label expr visitor " + System.identityHashCode(parent));
         return (currStmt != null);
     }
 

@@ -2,6 +2,7 @@ import exprFinder.expr.ExpressionLiteral;
 import exprFinder.expr.KillSet;
 import exprFinder.visitor.AEVisitor;
 import exprFinder.visitor.ExpressionVisitor;
+import exprFinder.visitor.ReplaceExpressionsVisitor;
 import exprFinder.visitor.RewriteExprVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -39,17 +40,17 @@ public class Driver {
         Driver driver = new Driver();
 
         driver.setupAST(file);
-        driver.replaceExpressions();
+        driver.insertVarDecAndAssignments();
         driver.applyEdits();
 
         driver.setupAST(file);
         driver.findReachingDefinitions();
         driver.removeNonreachingDefinitions();
+        driver.replaceExpressions();
         driver.applyEdits();
     }
 
     private void removeNonreachingDefinitions() {
-        System.out.println(reachingDef + "\n");
         cu.accept(new ASTVisitor() {
             @Override
             public boolean visit(Assignment node) {
@@ -120,13 +121,6 @@ public class Driver {
 
         ConstraintTermFactory variableFactory = visitor.getVariableFactory();
 
-        HashMap<ASTNode, ConstraintTerm> termMapEntry = variableFactory.getTermMapEntry();
-
-        for (ASTNode node : termMapEntry.keySet()) {
-            System.out.println(node + " " + System.identityHashCode(node));
-        }
-
-
         NodeLabelExprVisitor nodeLabelExprVisitor = new NodeLabelExprVisitor(variableFactory);
         cu.accept(nodeLabelExprVisitor);
 
@@ -144,7 +138,7 @@ public class Driver {
         }
     }
 
-    private void replaceExpressions() {
+    private void insertVarDecAndAssignments() {
         RewriteExprVisitor rewriteVisitor = null;
         List<TypeDeclaration> types = cu.types();
 
@@ -175,6 +169,29 @@ public class Driver {
             }
         }
         symbVarDec = rewriteVisitor.getSymbVarDec();
+    }
+
+
+    private void replaceExpressions() {
+        ReplaceExpressionsVisitor replaceExprVisitor = null;
+        List<TypeDeclaration> types = cu.types();
+
+        for (TypeDeclaration type : types) {
+
+            for (MethodDeclaration methodDeclaration : type.getMethods()) {
+
+                // get a list of nonlinear variable expressions, each is an ExpressionLiteral object
+                // map each to a new symbolic variable (string), ie what it will be replaced with
+                ExpressionVisitor exprVisitor = new ExpressionVisitor();
+                methodDeclaration.accept(exprVisitor);
+
+                HashMap<String, Integer> exprToVarMap = exprVisitor.getExprMap();
+
+                // replace each infix expression with its corresponding symbolic variable
+                replaceExprVisitor = new ReplaceExpressionsVisitor(exprToVarMap, rewriter, ast);
+                methodDeclaration.accept(replaceExprVisitor);
+            }
+        }
     }
 
     private void setupAST(File file) throws IOException {

@@ -227,10 +227,4 @@ public class RewriteExprVisitor extends ASTVisitor {
             listRewrite.insertFirst(varDeclaration, null);
         }
     }
-
-
-
-    public ASTRewrite getRewriter() {
-        return rewriter;
-    }
 }
