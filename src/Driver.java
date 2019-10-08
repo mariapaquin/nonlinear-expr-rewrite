@@ -29,24 +29,25 @@ public class Driver {
     private ASTRewrite rewriter;
     private CompilationUnit cu;
     private String source;
+    private File file;
     private List<ASTNode> reachingDef;
 
     public static void main(String[] args) throws IOException {
-
-        File file = new File("./tests/If.java");
+        String source = "./tests/IfElse.java";
+        File file = new File(source);
 
         Driver driver = new Driver();
 
         driver.setupAST(file);
         driver.initializeReassignSymbVar();
-        driver.applyEdits();
+        driver.applyEdits(file);
 
         driver.setupAST(file);
         driver.findReachingDefinitions();
         driver.removeNonreachingDefinitions();
 
         driver.replaceExpressions();
-        driver.applyEdits();
+        driver.applyEdits(file);
     }
 
     private void removeNonreachingDefinitions() {
@@ -63,7 +64,7 @@ public class Driver {
         });
     }
 
-    private void applyEdits() throws IOException {
+    private void applyEdits(File file) throws IOException {
         Document document = new Document(source);
         TextEdit edits = rewriter.rewriteAST(document, null);
         try {
@@ -74,7 +75,7 @@ public class Driver {
 
         System.out.println(document.get());
 
-        BufferedWriter out = new BufferedWriter(new FileWriter(new File("./tests/If.java")));
+        BufferedWriter out = new BufferedWriter(new FileWriter(file));
         out.write(document.get());
         out.flush();
         out.close();
