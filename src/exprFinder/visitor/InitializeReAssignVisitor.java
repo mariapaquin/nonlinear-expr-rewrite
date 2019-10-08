@@ -17,8 +17,6 @@ public class InitializeReAssignVisitor extends ASTVisitor {
     private ASTRewrite rewriter;
     private List<String> symbVars;
 
-
-
     public InitializeReAssignVisitor(HashMap<String, Integer> exprToVarmap,
                                      HashMap<ASTNode, KillSet> killMap,
                                      ASTRewrite rewriter, AST ast) {

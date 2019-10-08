@@ -79,16 +79,14 @@ public class ConstraintVisitor extends ASTVisitor {
             SimpleName name = (SimpleName) lhs;
 
             // parent is expression statement (wrapper for assignments)
-            ConstraintTerm assignEntry = variableFactory.createEntryLabel(parent); // RD_entry[v=e]
             DefinitionLiteral defWild = variableFactory.createDefinitionWildcard(name.getIdentifier());
-            SetDifference setDiff = getSetDiff(assignEntry, defWild);
+            SetDifference setDiff = getSetDiff(entry, defWild);
             variableFactory.setEntryLabel(parent, setDiff);
 
-            ConstraintTerm assignExit = variableFactory.createExitLabel(parent); // RD_exit[v=e]
             ConstraintTerm def = variableFactory.createDefinition(name.getIdentifier(), parent); // (v,v=e)
 
-            result.add(newSubsetConstraint(def, assignExit));
-            result.add(newSubsetConstraint(setDiff, assignExit));
+            result.add(newSubsetConstraint(def, exit));
+            result.add(newSubsetConstraint(setDiff, exit));
 
             if(!exitStmts.isEmpty()){
                 for (ASTNode stmt : exitStmts) {
@@ -124,7 +122,6 @@ public class ConstraintVisitor extends ASTVisitor {
 
             exitStmts.clear();
             exitStmts.add(node);
-
 
             //***************//
             //   condition   //
@@ -421,37 +418,69 @@ public class ConstraintVisitor extends ASTVisitor {
             constraints.addAll(result);
         }
 
-//        @Override
-//        public boolean visit(PostfixExpression node) {
-//            if (!(node.getParent() instanceof ExpressionStatement)) {
-//                return false;
-//            }
-//            variableFactory.createEntryLabel(node);
-//            variableFactory.createExitLabel(node);
-//            return true;
-//        }
-//
-//        @Override
-//        public void endVisit(PostfixExpression node) {
-//            List<Constraint> result = new ArrayList<Constraint>();
-//
-//            ConstraintTerm entry = variableFactory.createEntryLabel(node);
-//            ConstraintTerm exit = variableFactory.createExitLabel(node);
-//
-//            if(!exitStmts.isEmpty()){
-//                for (ASTNode stmt : exitStmts) {
-//                    ConstraintTerm prevExit = variableFactory.createExitLabel(stmt);
-//                    result.add(newSubsetConstraint(entry, prevExit));
-//                }
-//            }
-//
-//            result.add(newSubsetConstraint(exit, entry));
-//
-//            exitStmts.clear();
-//            exitStmts.add(node);
-//
-//            constraints.addAll(result);
-//        }
+        @Override
+        public boolean visit(PostfixExpression node) {
+            if (!(node.getParent() instanceof ExpressionStatement)) {
+                return false;
+            }
+            variableFactory.createEntryLabel(node);
+            variableFactory.createExitLabel(node);
+            return true;
+        }
+
+        @Override
+        public void endVisit(PostfixExpression node) {
+            List<Constraint> result = new ArrayList<Constraint>();
+
+            ConstraintTerm entry = variableFactory.createEntryLabel(node);
+            ConstraintTerm exit = variableFactory.createExitLabel(node);
+
+            if(!exitStmts.isEmpty()){
+                for (ASTNode stmt : exitStmts) {
+                    ConstraintTerm prevExit = variableFactory.createExitLabel(stmt);
+                    result.add(newSubsetConstraint(entry, prevExit));
+                }
+            }
+
+            result.add(newSubsetConstraint(exit, entry));
+
+            exitStmts.clear();
+            exitStmts.add(node);
+
+            constraints.addAll(result);
+        }
+
+        @Override
+        public boolean visit(PrefixExpression node) {
+            if (!(node.getParent() instanceof ExpressionStatement)) {
+                return false;
+            }
+            variableFactory.createEntryLabel(node);
+            variableFactory.createExitLabel(node);
+            return true;
+        }
+
+        @Override
+        public void endVisit(PrefixExpression node) {
+            List<Constraint> result = new ArrayList<Constraint>();
+
+            ConstraintTerm entry = variableFactory.createEntryLabel(node);
+            ConstraintTerm exit = variableFactory.createExitLabel(node);
+
+            if(!exitStmts.isEmpty()){
+                for (ASTNode stmt : exitStmts) {
+                    ConstraintTerm prevExit = variableFactory.createExitLabel(stmt);
+                    result.add(newSubsetConstraint(entry, prevExit));
+                }
+            }
+
+            result.add(newSubsetConstraint(exit, entry));
+
+            exitStmts.clear();
+            exitStmts.add(node);
+
+            constraints.addAll(result);
+        }
 
         @Override
         public boolean visit(VariableDeclarationStatement node) {
