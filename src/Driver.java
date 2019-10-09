@@ -33,7 +33,7 @@ public class Driver {
     private List<String> symbVars;
 
     public static void main(String[] args) throws IOException {
-        String source = "./tests/StatementSequence.java";
+        String source = "./tests/DoWhile.java";
         File file = new File(source);
 
         Driver driver = new Driver();

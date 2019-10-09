@@ -6,7 +6,6 @@ import reachingDef.Constraint.Term.EntryLabel;
 import reachingDef.Constraint.Term.SetDifference;
 import reachingDef.ConstraintCreator.ConstraintTermFactory;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,9 +14,6 @@ import java.util.List;
  * nonlinear variable infix expressions.
  */
 public class NodeLabelExprVisitor extends ASTVisitor {
-    public List<EntryLabel> getEntryLablesWithExpr() {
-        return entryLablesWithExpr;
-    }
 
     private List<EntryLabel> entryLablesWithExpr;
     private ConstraintTerm currStmt;
@@ -28,74 +24,127 @@ public class NodeLabelExprVisitor extends ASTVisitor {
         this.variableFactory = variableFactory;
     }
 
+    private boolean containsVar(Expression e) {
+        if (e instanceof SimpleName) {
+            return true;
+        }
+
+        if (e instanceof InfixExpression) {
+            InfixExpression infix = (InfixExpression) e;
+            return (containsVar(infix.getLeftOperand()) || containsVar(infix.getRightOperand()));
+        }
+
+        // TODO: What else can expression be?
+
+        return false;
+    }
+
+    public List<EntryLabel> getEntryLablesWithExpr() {
+        return entryLablesWithExpr;
+    }
+
     @Override
     public boolean visit(Assignment node) {
         ASTNode parent = node.getParent();
+        if (!variableFactory.containsEntryLabel(parent)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(parent);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(DoStatement node) {
+        if (!variableFactory.containsEntryLabel(node)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(node);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(EnhancedForStatement node) {
+        if (!variableFactory.containsEntryLabel(node)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(node);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(ForStatement node) {
+        if (!variableFactory.containsEntryLabel(node)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(node);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(IfStatement node) {
+        if (!variableFactory.containsEntryLabel(node)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(node);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(MethodInvocation node) {
-        // TODO: check if parent is expression statement
+        if (!(node.getParent() instanceof ExpressionStatement)) {
+            return false;
+        }
         ASTNode parent = node.getParent();
+        if (!variableFactory.containsEntryLabel(parent)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(parent);
-        return (currStmt != null);
-
+        return true;
     }
+
     @Override
     public boolean visit(PostfixExpression node) {
-        // TODO: check if parent is expression statement
+        if (!(node.getParent() instanceof ExpressionStatement)) {
+            return false;
+        }
         ASTNode parent = node.getParent();
+        if (!variableFactory.containsEntryLabel(parent)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(parent);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(PrefixExpression node) {
-        // TODO: check if parent is expression statement
+        if (!(node.getParent() instanceof ExpressionStatement)) {
+            return false;
+        }
         ASTNode parent = node.getParent();
+        if (!variableFactory.containsEntryLabel(parent)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(parent);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(VariableDeclarationStatement node) {
+        if (!variableFactory.containsEntryLabel(node)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(node);
-        return (currStmt != null);
+        return true;
     }
 
     @Override
     public boolean visit(WhileStatement node) {
+        if (!variableFactory.containsEntryLabel(node)) {
+            return false;
+        }
         currStmt = variableFactory.createEntryLabel(node);
-        return (currStmt != null);
+        return true;
     }
-
-
 
     @Override
     public boolean visit(InfixExpression node) {
@@ -103,7 +152,7 @@ public class NodeLabelExprVisitor extends ASTVisitor {
         Expression rhs = node.getRightOperand();
         InfixExpression.Operator op = node.getOperator();
 
-        if (!(lhs instanceof SimpleName) || !(rhs instanceof SimpleName)) {
+        if (!containsVar(lhs) || !containsVar(rhs)) {
             return true;
         }
 
@@ -121,18 +170,5 @@ public class NodeLabelExprVisitor extends ASTVisitor {
         }
 
         return true;
-    }
-
-    private List<String> getVarsUsed(InfixExpression node) {
-        List<String> vars = new ArrayList<>();
-        ASTVisitor visitor= new ASTVisitor() {
-            @Override
-            public boolean visit(SimpleName name) {
-                vars.add(name.getIdentifier());
-                return false;
-            }
-        };
-        node.accept(visitor);
-        return vars;
     }
 }

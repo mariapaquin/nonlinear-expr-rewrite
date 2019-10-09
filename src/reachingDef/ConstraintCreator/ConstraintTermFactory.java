@@ -11,9 +11,6 @@ import reachingDef.Constraint.Term.EntryLabel;
 import reachingDef.Constraint.Term.ExitLabel;
 
 public class ConstraintTermFactory {
-    public HashMap<ASTNode, ConstraintTerm> getTermMapEntry() {
-        return termMapEntry;
-    }
 
     private HashMap<ASTNode, ConstraintTerm> termMapEntry;
     private HashMap<ASTNode, ConstraintTerm> termMapExit;
@@ -24,6 +21,7 @@ public class ConstraintTermFactory {
         termMapExit = new HashMap<>();
         varMap = new LinkedHashMap<>();
     }
+
 
     public ConstraintTerm createEntryLabel(ASTNode node) {
         ConstraintTerm t = termMapEntry.get(node);
@@ -37,6 +35,11 @@ public class ConstraintTermFactory {
 
     public void setEntryLabel(ASTNode node, ConstraintTerm term) {
         termMapEntry.put(node, term);
+    }
+
+    public boolean containsEntryLabel(ASTNode node) {
+        ConstraintTerm t = termMapEntry.get(node);
+        return (t != null);
     }
 
     public ConstraintTerm createExitLabel(ASTNode node) {
@@ -57,13 +60,4 @@ public class ConstraintTermFactory {
         DefinitionLiteral defWild = new DefinitionLiteral(name);
         return defWild;
     }
-
-    public ConstraintTerm getEntryLabel(ASTNode node) {
-        return termMapEntry.get(node);
-    }
-
-    public ConstraintTerm getExitLabel(ASTNode node) {
-        return termMapExit.get(node);
-    }
-
 }

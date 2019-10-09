@@ -13,10 +13,7 @@ import java.util.List;
 public class ExpressionVisitor extends ASTVisitor {
     private List<ExpressionLiteral> nonlinearVarExpr;
     private HashMap<String, Integer> exprMap;
-
-
     private int varCount;
-
 
     public ExpressionVisitor() {
         nonlinearVarExpr = new ArrayList<>();
@@ -38,7 +35,7 @@ public class ExpressionVisitor extends ASTVisitor {
         Expression rhs = node.getRightOperand();
         InfixExpression.Operator op = node.getOperator();
 
-        if (!(lhs instanceof SimpleName) || !(rhs instanceof SimpleName)) {
+        if (!containsVar(lhs) || !containsVar(rhs)) {
             return true;
         }
 
@@ -64,6 +61,21 @@ public class ExpressionVisitor extends ASTVisitor {
             exprMap.put(node.toString(), varCount++);
         }
         return true;
+    }
+
+    private boolean containsVar(Expression e) {
+        if (e instanceof SimpleName) {
+            return true;
+        }
+
+        if (e instanceof InfixExpression) {
+            InfixExpression infix = (InfixExpression) e;
+            return (containsVar(infix.getLeftOperand()) || containsVar(infix.getRightOperand()));
+        }
+
+        // TODO: What else can expression be?
+
+        return false;
     }
 
     private List<String> getVarsUsed(InfixExpression node) {
