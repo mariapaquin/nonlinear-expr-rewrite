@@ -3,9 +3,9 @@ package exprFinder.main;
 
 import exprFinder.expr.ExpressionLiteral;
 import exprFinder.expr.KillSet;
-import exprFinder.visitor.AEVisitor;
-import exprFinder.visitor.ExpressionVisitor;
-import exprFinder.visitor.InitializeReAssignVisitor;
+import exprFinder.visitor.KillsetVisitor;
+import exprFinder.visitor.NonlinearExprVisitor;
+import exprFinder.visitor.InitSymbVarsVisitor;
 
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -38,17 +38,17 @@ public class Driver {
         for (TypeDeclaration type : types) {
             for (MethodDeclaration methodDeclaration : type.getMethods()) {
 
-                ExpressionVisitor exprVisitor = new ExpressionVisitor();
+                NonlinearExprVisitor exprVisitor = new NonlinearExprVisitor();
                 methodDeclaration.accept(exprVisitor);
                 List<ExpressionLiteral> exprList = exprVisitor.getNonlinearVarExpr();
                 HashMap<String, Integer> exprToVarMap = exprVisitor.getExprMap();
                 int varCount = exprVisitor.getVarCount();
 
-                AEVisitor aeVisitor = new AEVisitor(exprList);
-                methodDeclaration.accept(aeVisitor);
-                HashMap<ASTNode, KillSet> killMap = aeVisitor.getKillMap();
+                KillsetVisitor killsetVisitor = new KillsetVisitor(exprList);
+                methodDeclaration.accept(killsetVisitor);
+                HashMap<ASTNode, KillSet> killMap = killsetVisitor.getKillMap();
 
-                InitializeReAssignVisitor rewriteVisitor = new InitializeReAssignVisitor(exprToVarMap,
+                InitSymbVarsVisitor rewriteVisitor = new InitSymbVarsVisitor(exprToVarMap,
                         killMap, rewriter, ast);
                 methodDeclaration.accept(rewriteVisitor);
 

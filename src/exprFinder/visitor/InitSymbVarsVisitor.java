@@ -10,16 +10,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class InitializeReAssignVisitor extends ASTVisitor {
+public class InitSymbVarsVisitor extends ASTVisitor {
     private HashMap<String, Integer> exprToVarmap;
     private HashMap<ASTNode, KillSet> killMap;
     private AST ast;
     private ASTRewrite rewriter;
     private List<String> symbVars;
 
-    public InitializeReAssignVisitor(HashMap<String, Integer> exprToVarmap,
-                                     HashMap<ASTNode, KillSet> killMap,
-                                     ASTRewrite rewriter, AST ast) {
+    public InitSymbVarsVisitor(HashMap<String, Integer> exprToVarmap,
+                               HashMap<ASTNode, KillSet> killMap,
+                               ASTRewrite rewriter, AST ast) {
         this.exprToVarmap = exprToVarmap;
         this.killMap = killMap;
         this.rewriter = rewriter;

@@ -5,14 +5,13 @@ import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 
 import java.util.HashMap;
 
-public class ReplaceExpressionVisitor extends ASTVisitor {
+public class ReplaceNonlinearExprVisitor extends ASTVisitor {
     private HashMap<String, Integer> exprToVarmap;
     private AST ast;
     private ASTRewrite rewriter;
 
-
-    public ReplaceExpressionVisitor(HashMap<String, Integer> exprToVarmap,
-                                    ASTRewrite rewriter, AST ast) {
+    public ReplaceNonlinearExprVisitor(HashMap<String, Integer> exprToVarmap,
+                                       ASTRewrite rewriter, AST ast) {
         this.exprToVarmap = exprToVarmap;
         this.rewriter = rewriter;
         this.ast = ast;

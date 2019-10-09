@@ -9,11 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class AEVisitor extends ASTVisitor {
+public class KillsetVisitor extends ASTVisitor {
     private List<ExpressionLiteral> availableExpressions;
     private HashMap<ASTNode, KillSet> killMap;
 
-    public AEVisitor(List<ExpressionLiteral> availableExpressions) {
+    public KillsetVisitor(List<ExpressionLiteral> availableExpressions) {
         this.availableExpressions = availableExpressions;
         killMap = new HashMap<>();
     }

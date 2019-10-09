@@ -1,9 +1,9 @@
 import exprFinder.expr.ExpressionLiteral;
 import exprFinder.expr.KillSet;
-import exprFinder.visitor.AEVisitor;
-import exprFinder.visitor.ExpressionVisitor;
-import exprFinder.visitor.ReplaceExpressionVisitor;
-import exprFinder.visitor.InitializeReAssignVisitor;
+import exprFinder.visitor.KillsetVisitor;
+import exprFinder.visitor.NonlinearExprVisitor;
+import exprFinder.visitor.ReplaceNonlinearExprVisitor;
+import exprFinder.visitor.InitSymbVarsVisitor;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.jface.text.BadLocationException;
@@ -15,7 +15,7 @@ import reachingDef.Constraint.Term.EntryLabel;
 import reachingDef.ConstraintCreator.ConstraintTermFactory;
 import reachingDef.Solving.ConstraintSolver;
 import reachingDef.visitor.ConstraintVisitor;
-import reachingDef.visitor.NodeLabelExprVisitor;
+import reachingDef.visitor.StmtWithExprVisitor;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -128,7 +128,7 @@ public class Driver {
 
         ConstraintTermFactory variableFactory = visitor.getVariableFactory();
 
-        NodeLabelExprVisitor nodeLabelExprVisitor = new NodeLabelExprVisitor(variableFactory);
+        StmtWithExprVisitor nodeLabelExprVisitor = new StmtWithExprVisitor(variableFactory);
         cu.accept(nodeLabelExprVisitor);
 
         // we only care about the reaching definitions of statements that contain
@@ -156,21 +156,21 @@ public class Driver {
 
                 // get a list of nonlinear variable expressions, each is an ExpressionLiteral object
                 // map each to a new symbolic variable (string), ie what it will be replaced with
-                ExpressionVisitor exprVisitor = new ExpressionVisitor();
+                NonlinearExprVisitor exprVisitor = new NonlinearExprVisitor();
                 methodDeclaration.accept(exprVisitor);
 
                 List<ExpressionLiteral> exprList = exprVisitor.getNonlinearVarExpr();
                 HashMap<String, Integer> exprToVarMap = exprVisitor.getExprMap();
 
                 // map each applicable node (assignment, var dec, postfix expr, etc) to the expression it kills
-                AEVisitor aeVisitor = new AEVisitor(exprList);
-                methodDeclaration.accept(aeVisitor);
-                HashMap<ASTNode, KillSet> killMap = aeVisitor.getKillMap();
+                KillsetVisitor killsetVisitor = new KillsetVisitor(exprList);
+                methodDeclaration.accept(killsetVisitor);
+                HashMap<ASTNode, KillSet> killMap = killsetVisitor.getKillMap();
 
                 // (1) initialize each symbolic variable at the beginning of the method
                 // (2) Get the expressions killed for each statement. Re-assign the symbolic
                 // variable associated with each expression in its kill set.
-                InitializeReAssignVisitor visitor = new InitializeReAssignVisitor(exprToVarMap,
+                InitSymbVarsVisitor visitor = new InitSymbVarsVisitor(exprToVarMap,
                         killMap, rewriter, ast);
                 methodDeclaration.accept(visitor);
 
@@ -188,13 +188,13 @@ public class Driver {
 
                 // get a list of nonlinear variable expressions, each is an ExpressionLiteral object
                 // map each to a new symbolic variable (string), ie what it will be replaced with
-                ExpressionVisitor exprVisitor = new ExpressionVisitor();
+                NonlinearExprVisitor exprVisitor = new NonlinearExprVisitor();
                 methodDeclaration.accept(exprVisitor);
 
                 HashMap<String, Integer> exprToVarMap = exprVisitor.getExprMap();
 
                 // replace each infix expression with its corresponding symbolic variable
-                ReplaceExpressionVisitor visitor = new ReplaceExpressionVisitor(exprToVarMap, rewriter, ast);
+                ReplaceNonlinearExprVisitor visitor = new ReplaceNonlinearExprVisitor(exprToVarMap, rewriter, ast);
                 methodDeclaration.accept(visitor);
             }
         }

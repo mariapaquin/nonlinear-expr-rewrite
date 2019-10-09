@@ -13,13 +13,13 @@ import java.util.List;
  * Find entry labels for statements that contain
  * nonlinear variable infix expressions.
  */
-public class NodeLabelExprVisitor extends ASTVisitor {
+public class StmtWithExprVisitor extends ASTVisitor {
 
     private List<EntryLabel> entryLablesWithExpr;
     private ConstraintTerm currStmt;
     private ConstraintTermFactory variableFactory;
 
-    public NodeLabelExprVisitor(ConstraintTermFactory variableFactory) {
+    public StmtWithExprVisitor(ConstraintTermFactory variableFactory) {
         entryLablesWithExpr = new ArrayList<>();
         this.variableFactory = variableFactory;
     }

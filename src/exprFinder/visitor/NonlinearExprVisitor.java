@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ExpressionVisitor extends ASTVisitor {
+public class NonlinearExprVisitor extends ASTVisitor {
     private List<ExpressionLiteral> nonlinearVarExpr;
     private HashMap<String, Integer> exprMap;
     private int varCount;
 
-    public ExpressionVisitor() {
+    public NonlinearExprVisitor() {
         nonlinearVarExpr = new ArrayList<>();
         exprMap = new HashMap<>();
         varCount = 0;
